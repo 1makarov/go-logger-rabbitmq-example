@@ -47,16 +47,12 @@ func (s *LoggerService) HandleStream(ctx context.Context) error {
 	}
 
 	for {
-
-		select {
-		case v, ok := <-s.rabbit.Stream:
-			if !ok {
-				continue
-			}
-			if err := handleAction(v); err != nil {
-				return err
-			}
+		v, ok := <-s.rabbit.Stream
+		if !ok {
+			continue
 		}
-
+		if err := handleAction(v); err != nil {
+			return err
+		}
 	}
 }
