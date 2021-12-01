@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .env
+    networks:
+      - application
+
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    restart: unless-stopped
+    command: mongod --port ${DB_PORT}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./.build/volumes/mongodb/data:/data/db
+    env_file:
+      - .env
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    networks:
+      - application
+
+  mongo-express:
+    image: mongo-express
+    container_name: "mongo-express"
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_AUTH_USERNAME: ${DB_USER}
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: ${DB_PASSWORD}
+      ME_CONFIG_MONGODB_URL: mongodb://${DB_USER}:${DB_PASSWORD}@mongodb:${DB_PORT}/
+    env_file:
+      - .env
+    networks:
+      - application
+
+networks:
+  application:
+    driver: bridge

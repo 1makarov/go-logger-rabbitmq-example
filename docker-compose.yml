@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    container_name: logger
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - application
+
+networks:
+  application:
+    driver: bridge
