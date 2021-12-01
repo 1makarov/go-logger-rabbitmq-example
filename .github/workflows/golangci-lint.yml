@@ -1,0 +1,19 @@
+name: golangci-lint
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: lint go code
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          skip-pkg-cache: true
+          skip-build-cache: true
