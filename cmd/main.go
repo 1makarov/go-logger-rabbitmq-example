@@ -22,14 +22,22 @@ func main() {
 		logrus.Errorln(err)
 		return
 	}
-	defer rabbitConn.Close()
+	defer func() {
+		if err = rabbitConn.Close(); err != nil {
+			logrus.Errorln(err)
+		}
+	}()
 
 	mongoClient, err := mongo.Open(ctx, cfg.DB)
 	if err != nil {
 		logrus.Errorln(err)
 		return
 	}
-	defer mongoClient.Disconnect(ctx)
+	defer func() {
+		if err = mongoClient.Disconnect(ctx); err != nil {
+			logrus.Errorln(err)
+		}
+	}()
 
 	db := mongoClient.Database(cfg.DB.Name)
 	rabbit := rabbitmq.New(rabbitConn)
