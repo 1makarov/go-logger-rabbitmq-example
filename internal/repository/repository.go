@@ -5,11 +5,11 @@ import "go.mongodb.org/mongo-driver/mongo"
 const loggerCollection = "logs"
 
 type Repository struct {
-	*LoggerRepo
+	*LoggerRepository
 }
 
 func New(db *mongo.Database) *Repository {
 	return &Repository{
-		LoggerRepo: NewLoggerRepo(db),
+		LoggerRepository: newLoggerRepository(db.Collection(loggerCollection)),
 	}
 }

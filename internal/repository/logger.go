@@ -6,17 +6,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type LoggerRepo struct {
+type LoggerRepository struct {
 	db *mongo.Collection
 }
 
-func NewLoggerRepo(db *mongo.Database) *LoggerRepo {
-	return &LoggerRepo{
-		db: db.Collection(loggerCollection),
+func newLoggerRepository(db *mongo.Collection) *LoggerRepository {
+	return &LoggerRepository{
+		db: db,
 	}
 }
 
-func (r *LoggerRepo) Add(ctx context.Context, v types.LogItem) error {
+func (r *LoggerRepository) Add(ctx context.Context, v types.LogItem) error {
 	_, err := r.db.InsertOne(ctx, v)
 
 	return err

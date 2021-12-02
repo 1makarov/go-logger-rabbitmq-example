@@ -2,13 +2,13 @@ package config
 
 import (
 	"github.com/1makarov/go-logger-rabbitmq-example/internal/db/mongo"
-	"github.com/1makarov/go-logger-rabbitmq-example/internal/rabbit"
+	"github.com/1makarov/go-logger-rabbitmq-example/internal/rabbitmq"
 	"os"
 )
 
 type Config struct {
 	DB     mongo.Config
-	Rabbit rabbit.Config
+	Rabbit rabbitmq.Config
 }
 
 func Init() *Config {

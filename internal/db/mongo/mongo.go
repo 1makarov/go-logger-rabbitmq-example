@@ -6,13 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type DB struct {
-	client *mongo.Client
-
-	cfg Config
-}
-
-func Open(ctx context.Context, cfg Config) (*DB, error) {
+func Open(ctx context.Context, cfg Config) (*mongo.Client, error) {
 	opts := options.Client().ApplyURI(cfg.url())
 
 	client, err := mongo.Connect(ctx, opts)
@@ -20,13 +14,5 @@ func Open(ctx context.Context, cfg Config) (*DB, error) {
 		return nil, err
 	}
 
-	return &DB{client: client, cfg: cfg}, client.Ping(ctx, nil)
-}
-
-func (db *DB) Connect() *mongo.Database {
-	return db.client.Database(db.cfg.Name)
-}
-
-func (db *DB) Close(ctx context.Context) error {
-	return db.client.Disconnect(ctx)
+	return client, client.Ping(ctx, nil)
 }
