@@ -13,6 +13,10 @@ import (
 	"github.com/streadway/amqp"
 )
 
+func init() {
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+}
+
 func main() {
 	cfg := config.Init()
 	ctx := context.Background()
