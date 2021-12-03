@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/1makarov/go-logger-rabbitmq-example/config"
-	"github.com/1makarov/go-logger-rabbitmq-example/internal/db/mongo"
+	"github.com/1makarov/go-logger-rabbitmq-example/internal/config"
 	"github.com/1makarov/go-logger-rabbitmq-example/internal/logger"
-	"github.com/1makarov/go-logger-rabbitmq-example/internal/pkg/signaler"
+	"github.com/1makarov/go-logger-rabbitmq-example/internal/mongodb"
 	"github.com/1makarov/go-logger-rabbitmq-example/internal/rabbitmq"
 	"github.com/1makarov/go-logger-rabbitmq-example/internal/repository"
-	"github.com/1makarov/go-logger-rabbitmq-example/internal/service"
+	"github.com/1makarov/go-logger-rabbitmq-example/internal/services"
+	"github.com/1makarov/go-logger-rabbitmq-example/pkg/signaler"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
@@ -28,7 +28,7 @@ func main() {
 		}
 	}()
 
-	mongoClient, err := mongo.Open(ctx, cfg.DB)
+	mongoClient, err := mongodb.Open(ctx, cfg.DB)
 	if err != nil {
 		logrus.Errorln(err)
 		return
@@ -49,17 +49,17 @@ func main() {
 	}
 
 	repo := repository.New(db)
-	services := service.New(repo)
-	loggers := logger.New(channel, services.LoggerService)
+	service := services.New(repo)
+	loggers := logger.New(channel, service.Logger)
 
 	go func() {
-		if err = loggers.Add(); err != nil {
+		if err = loggers.Add(ctx); err != nil {
 			logrus.Errorln(err)
 			signaler.Signal()
 		}
 	}()
 
-	logrus.Infoln("logger started")
+	logrus.Infoln("started")
 
 	signaler.Wait()
 }

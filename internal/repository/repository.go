@@ -1,15 +1,21 @@
 package repository
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
+	"github.com/1makarov/go-logger-rabbitmq-example/internal/types"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
-const loggerCollection = "logs"
+type Logger interface {
+	Add(ctx context.Context, v types.LogItem) error
+}
 
 type Repository struct {
-	*LoggerRepository
+	Logger Logger
 }
 
 func New(db *mongo.Database) *Repository {
 	return &Repository{
-		LoggerRepository: newLoggerRepository(db.Collection(loggerCollection)),
+		Logger: newLoggerRepository(db.Collection(loggerCollection)),
 	}
 }

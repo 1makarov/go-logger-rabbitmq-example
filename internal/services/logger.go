@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"context"
@@ -7,10 +7,10 @@ import (
 )
 
 type LoggerService struct {
-	repo *repository.LoggerRepository
+	repo repository.Logger
 }
 
-func NewLoggerService(repo *repository.LoggerRepository) *LoggerService {
+func NewLoggerService(repo repository.Logger) *LoggerService {
 	return &LoggerService{
 		repo: repo,
 	}
