@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/1makarov/go-logger-rabbitmq-example/internal/types"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/jmoiron/sqlx"
 )
 
 type Logger interface {
@@ -14,8 +14,8 @@ type Repository struct {
 	Logger Logger
 }
 
-func New(db *mongo.Database) *Repository {
+func New(db *sqlx.DB) *Repository {
 	return &Repository{
-		Logger: newLoggerRepository(db.Collection(loggerCollection)),
+		Logger: newLoggerRepository(db),
 	}
 }

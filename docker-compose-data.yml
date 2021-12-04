@@ -16,37 +16,21 @@ services:
     networks:
       - application
 
-  mongodb:
-    image: mongo:latest
-    container_name: "mongodb"
+  postgres:
+    image: postgres:latest
+    container_name: pg
     restart: unless-stopped
-    command: mongod --port ${DB_PORT}
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
     volumes:
-      - ./.build/volumes/mongodb/data:/data/db
-    env_file:
-      - .env
-    ports:
-      - ${DB_PORT}:${DB_PORT}
-    networks:
-      - application
-
-  mongo-express:
-    image: mongo-express
-    container_name: "mongo-express"
-    depends_on:
-      - mongodb
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_AUTH_USERNAME: ${DB_USER}
-      ME_CONFIG_MONGODB_AUTH_PASSWORD: ${DB_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${DB_USER}:${DB_PASSWORD}@mongodb:${DB_PORT}/
-    env_file:
-      - .env
+      - ./.build/volumes/databases/postgres/data:/var/lib/postgresql/data
+      - ./schema:/docker-entrypoint-initdb.d
     networks:
       - application
 
